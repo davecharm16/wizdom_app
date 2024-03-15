@@ -77,9 +77,11 @@ class _AuthScreenState extends State<AuthScreen> {
               ),
               TextButton(
                 onPressed: () {
-                  setState(() {
-                    _isLogin = !_isLogin;
-                  });
+                  setState(
+                    () {
+                      _isLogin = !_isLogin;
+                    },
+                  );
                 },
                 child: Text(
                   _isLogin
@@ -88,13 +90,9 @@ class _AuthScreenState extends State<AuthScreen> {
                 ),
               ),
               TextButton(
-                onPressed: () {
-                  setState(() {
-                    _isLogin = !_isLogin;
-                  });
-                },
+                onPressed: () {},
                 child: Text(
-                  'forgot password'.toUpperCase(),
+                  'Forgot Password?'.toUpperCase(),
                 ),
               ),
             ],
