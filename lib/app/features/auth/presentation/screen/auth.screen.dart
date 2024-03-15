@@ -40,6 +40,16 @@ class _AuthScreenState extends State<AuthScreen> {
                       const SizedBox(
                         height: 8,
                       ),
+                      if (!_isLogin) ...[
+                        const TextField(
+                          decoration: InputDecoration(
+                            labelText: 'Name',
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 8,
+                        ),
+                      ],
                       const TextField(
                         decoration: InputDecoration(
                           labelText: 'Password',
@@ -75,16 +85,6 @@ class _AuthScreenState extends State<AuthScreen> {
                   _isLogin
                       ? 'Create an account'.toUpperCase()
                       : 'I already have an account'.toUpperCase(),
-                ),
-              ),
-              TextButton(
-                onPressed: () {
-                  setState(() {
-                    _isLogin = !_isLogin;
-                  });
-                },
-                child: Text(
-                  'forgot password'.toUpperCase(),
                 ),
               ),
               TextButton(

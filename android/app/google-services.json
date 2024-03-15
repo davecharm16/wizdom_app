@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "176586005175",
+    "project_id": "flutter-wizdom-app",
+    "storage_bucket": "flutter-wizdom-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:176586005175:android:141be06fc60a12cfad0b32",
+        "android_client_info": {
+          "package_name": "com.example.wizdom_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDWxVRymrwLh__nzlvk8pTNBGmvYCoIgDk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
