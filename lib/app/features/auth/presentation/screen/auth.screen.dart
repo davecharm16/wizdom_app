@@ -10,6 +10,16 @@ class AuthScreen extends StatefulWidget {
 class _AuthScreenState extends State<AuthScreen> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return const Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('Wizdom'),
+            Text('Welcome to Wizdom'),
+          ],
+        ),
+      ),
+    );
   }
 }
