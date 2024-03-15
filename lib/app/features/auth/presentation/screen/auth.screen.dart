@@ -87,6 +87,16 @@ class _AuthScreenState extends State<AuthScreen> {
                   'forgot password'.toUpperCase(),
                 ),
               ),
+              TextButton(
+                onPressed: () {
+                  setState(() {
+                    _isLogin = !_isLogin;
+                  });
+                },
+                child: Text(
+                  'forgot password'.toUpperCase(),
+                ),
+              ),
             ],
           ),
         ),
