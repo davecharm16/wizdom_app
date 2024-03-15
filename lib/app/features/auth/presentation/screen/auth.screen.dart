@@ -77,6 +77,16 @@ class _AuthScreenState extends State<AuthScreen> {
                       : 'I already have an account'.toUpperCase(),
                 ),
               ),
+              TextButton(
+                onPressed: () {
+                  setState(() {
+                    _isLogin = !_isLogin;
+                  });
+                },
+                child: Text(
+                  'forgot password'.toUpperCase(),
+                ),
+              ),
             ],
           ),
         ),
