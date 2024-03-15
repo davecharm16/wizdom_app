@@ -1,4 +1,12 @@
 class AuthUser {
+  factory AuthUser.fromJson(
+    Map<String, dynamic> json,
+  ) =>
+      AuthUser(
+        uid: json['uid'],
+        email: json['email'],
+        name: json['name'],
+      );
   AuthUser({
     required this.uid,
     required this.email,
@@ -9,15 +17,6 @@ class AuthUser {
   final String email;
   final String name;
   String? error;
-
-  factory AuthUser.fromJson(
-    Map<String, dynamic> json,
-  ) =>
-      AuthUser(
-        uid: json['uid'],
-        email: json['email'],
-        name: json['name'],
-      );
 
   AuthUser copyWith({
     String? uid,

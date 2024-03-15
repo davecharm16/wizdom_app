@@ -10,37 +10,43 @@ enum AuthType {
 }
 
 class AuthService {
-  AuthService({required this.authType});
-  final AuthType authType;
+  AuthService();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Future<AuthUser?> authenticateUser(
-      String email, String password, AuthType type) async {
+      String email, String password, AuthType type,
+      {String? name}) async {
     try {
       if (type == AuthType.login) {
-        final userCredential = await _auth.signInWithEmailAndPassword(
+        final UserCredential userCredential =
+            await _auth.signInWithEmailAndPassword(
           email: email,
           password: password,
         );
 
-        final user = await _firestore
+        final DocumentSnapshot<Map<String, dynamic>> user = await _firestore
             .collection('user')
             .doc(userCredential.user!.uid)
             .get();
         return AuthUser.fromJson(user.data()!);
       } else {
-        final userCredential = await _auth.createUserWithEmailAndPassword(
+        final UserCredential userCredential =
+            await _auth.createUserWithEmailAndPassword(
           email: email,
           password: password,
         );
 
-        await _firestore.collection('user').doc(userCredential.user!.uid).set({
+        await _firestore
+            .collection('user')
+            .doc(userCredential.user!.uid)
+            .set(<String, String>{
           'email': email,
           'password': password,
+          'name': name ?? '',
         });
 
-        final user = await _firestore
+        final DocumentSnapshot<Map<String, dynamic>> user = await _firestore
             .collection('user')
             .doc(userCredential.user!.uid)
             .get();
@@ -50,5 +56,17 @@ class AuthService {
       log(e.toString());
       return null;
     }
+  }
+
+  Stream<User?> authStateChanges() {
+    return _auth.authStateChanges();
+  }
+
+  Future<void> signOut() async {
+    await _auth.signOut();
+  }
+
+  Future<void> resetPassword(String email) async {
+    await _auth.sendPasswordResetEmail(email: email);
   }
 }

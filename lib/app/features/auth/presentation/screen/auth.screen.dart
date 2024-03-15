@@ -1,23 +1,50 @@
-import 'package:flutter/material.dart';
-import 'package:wizdom_app/app/core/utils/extensions/auth.extension.dart';
+import 'dart:developer';
 
-class AuthScreen extends StatefulWidget {
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:wizdom_app/app/core/utils/extensions/auth.extension.dart';
+import 'package:wizdom_app/app/features/auth/data/models/auth.model.dart';
+import 'package:wizdom_app/app/features/auth/data/repo/auth.repository.dart';
+import 'package:wizdom_app/app/features/auth/data/services/auth.service.dart';
+import 'package:wizdom_app/app/features/auth/domain/provider/auth.provider.dart';
+
+class AuthScreen extends ConsumerStatefulWidget {
   const AuthScreen({super.key});
 
   @override
-  State<AuthScreen> createState() => _AuthScreenState();
+  ConsumerState<AuthScreen> createState() => _AuthScreenState();
 }
 
-class _AuthScreenState extends State<AuthScreen> {
+class _AuthScreenState extends ConsumerState<AuthScreen> {
   bool _isLogin = true;
-  final form = GlobalKey<FormState>();
+  final GlobalKey<FormState> form = GlobalKey<FormState>();
+  final Map<String, String> _authData = <String, String>{
+    'email': '',
+    'password': '',
+    'name': '',
+  };
 
-  void _onSubmit() {
-    final isValid = form.currentState!.validate();
+  void _onSubmit() async {
+    final AuthUser? user;
+    final AuthRepository authentication = ref.read(authProvider);
+    final bool isValid = form.currentState!.validate();
     if (!isValid) {
       form.currentState!.save();
+      if (_isLogin) {
+        user = await authentication.authenticateUser(
+            _authData['email']!, _authData['password']!, AuthType.login);
+      } else {
+        user = await authentication.authenticateUser(
+            _authData['email']!, _authData['password']!, AuthType.signUp,
+            name: _authData['name']!);
+      }
 
-      return;
+      if (user != null) {
+        // Navigate to home screen
+        log(user.email);
+      } else {
+        log('Error');
+      }
     }
   }
 
@@ -30,7 +57,7 @@ class _AuthScreenState extends State<AuthScreen> {
           child: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              children: [
+              children: <Widget>[
                 Text(
                   'WizdomHUB',
                   style: Theme.of(context).textTheme.headlineLarge!.copyWith(
@@ -46,22 +73,28 @@ class _AuthScreenState extends State<AuthScreen> {
                     child: Form(
                       key: form,
                       child: Column(
-                        children: [
+                        children: <Widget>[
                           TextFormField(
                             decoration: const InputDecoration(
                               labelText: 'Email',
                             ),
-                            validator: (value) => value!.validateEmail,
+                            validator: (String? value) => value!.validateEmail,
+                            onSaved: (String? value) {
+                              _authData['email'] = value!;
+                            },
                           ),
                           const SizedBox(
                             height: 8,
                           ),
-                          if (!_isLogin) ...[
+                          if (!_isLogin) ...<Widget>[
                             TextFormField(
                               decoration: const InputDecoration(
                                 labelText: 'Name',
                               ),
-                              validator: (value) => value!.validateName,
+                              validator: (String? value) => value!.validateName,
+                              onSaved: (String? value) {
+                                _authData['name'] = value!;
+                              },
                             ),
                             const SizedBox(
                               height: 8,
@@ -72,7 +105,11 @@ class _AuthScreenState extends State<AuthScreen> {
                               labelText: 'Password',
                             ),
                             obscureText: true,
-                            validator: (value) => value!.validatePassword,
+                            validator: (String? value) =>
+                                value!.validatePassword,
+                            onSaved: (String? value) {
+                              _authData['password'] = value!;
+                            },
                           ),
                           const SizedBox(
                             height: 8,
