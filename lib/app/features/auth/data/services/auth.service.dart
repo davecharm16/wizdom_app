@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -44,6 +45,7 @@ class AuthService {
           'email': email,
           'password': password,
           'name': name ?? '',
+          'uid': userCredential.user!.uid,
         });
 
         final DocumentSnapshot<Map<String, dynamic>> user = await _firestore
@@ -53,7 +55,7 @@ class AuthService {
         return AuthUser.fromJson(user.data()!);
       }
     } catch (e) {
-      log(e.toString());
+      log(e.toString(), name: 'AuthService');
       return null;
     }
   }

@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wizdom_app/app/core/utils/extensions/auth.extension.dart';
+import 'package:wizdom_app/app/core/utils/snackbars/error.snackbars.dart';
 import 'package:wizdom_app/app/features/auth/data/models/auth.model.dart';
 import 'package:wizdom_app/app/features/auth/data/repo/auth.repository.dart';
 import 'package:wizdom_app/app/features/auth/data/services/auth.service.dart';
@@ -24,26 +25,27 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
     'name': '',
   };
 
-  void _onSubmit() async {
-    final AuthUser? user;
+  void _onSubmit(BuildContext context) async {
     final AuthRepository authentication = ref.read(authProvider);
     final bool isValid = form.currentState!.validate();
-    if (!isValid) {
+    if (isValid) {
       form.currentState!.save();
-      if (_isLogin) {
-        user = await authentication.authenticateUser(
-            _authData['email']!, _authData['password']!, AuthType.login);
-      } else {
-        user = await authentication.authenticateUser(
-            _authData['email']!, _authData['password']!, AuthType.signUp,
-            name: _authData['name']!);
-      }
 
-      if (user != null) {
-        // Navigate to home screen
-        log(user.email);
-      } else {
-        log('Error');
+      final AuthUser? user = _isLogin
+          ? ref.read(userProvider.notifier).state =
+              await authentication.authenticateUser(
+                  _authData['email']!, _authData['password']!, AuthType.login)
+          : ref.read(userProvider.notifier).state =
+              await authentication.authenticateUser(
+                  _authData['email']!, _authData['password']!, AuthType.signUp,
+                  name: _authData['name']!);
+
+      log('${user?.email} ', name: 'AuthScreen');
+      if (context.mounted) {
+        if (user == null) {
+          ErrorSnackBar(context: context, message: 'Authentication failed')
+              .show();
+        }
       }
     }
   }
@@ -115,7 +117,9 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                             height: 8,
                           ),
                           ElevatedButton(
-                            onPressed: _onSubmit,
+                            onPressed: () {
+                              _onSubmit(context);
+                            },
                             style: ElevatedButton.styleFrom(
                               backgroundColor:
                                   Theme.of(context).colorScheme.primary,
