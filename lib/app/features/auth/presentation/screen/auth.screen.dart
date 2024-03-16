@@ -19,6 +19,7 @@ class AuthScreen extends ConsumerStatefulWidget {
 class _AuthScreenState extends ConsumerState<AuthScreen> {
   bool _isLogin = true;
   bool _isLoading = false;
+  bool _isObscure = true;
   final GlobalKey<FormState> form = GlobalKey<FormState>();
   final Map<String, String> _authData = <String, String>{
     'email': '',
@@ -112,10 +113,22 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                             ),
                           ],
                           TextFormField(
-                            decoration: const InputDecoration(
+                            decoration: InputDecoration(
                               labelText: 'Password',
+                              suffix: IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _isObscure = !_isObscure;
+                                  });
+                                },
+                                icon: _isObscure
+                                    ? const Icon(
+                                        Icons.visibility_off,
+                                      )
+                                    : const Icon(Icons.visibility),
+                              ),
                             ),
-                            obscureText: true,
+                            obscureText: _isObscure,
                             validator: (String? value) =>
                                 value!.validatePassword,
                             onSaved: (String? value) {

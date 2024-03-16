@@ -21,6 +21,7 @@ class _MyAppState extends ConsumerState<MyApp> {
     return MaterialApp(
       title: 'Wizdom',
       theme: themeData,
+      debugShowCheckedModeBanner: false,
       home: authChanges.when(
         data: (User? user) {
           if (user == null) {
