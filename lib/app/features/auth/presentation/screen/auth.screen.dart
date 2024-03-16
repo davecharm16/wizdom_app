@@ -18,6 +18,7 @@ class AuthScreen extends ConsumerStatefulWidget {
 
 class _AuthScreenState extends ConsumerState<AuthScreen> {
   bool _isLogin = true;
+  bool _isLoading = false;
   final GlobalKey<FormState> form = GlobalKey<FormState>();
   final Map<String, String> _authData = <String, String>{
     'email': '',
@@ -26,6 +27,9 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   };
 
   void _onSubmit(BuildContext context) async {
+    setState(() {
+      _isLoading = true;
+    });
     final AuthRepository authentication = ref.read(authProvider);
     final bool isValid = form.currentState!.validate();
     if (isValid) {
@@ -41,7 +45,12 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                   name: _authData['name']!);
 
       log('${user?.email} ', name: 'AuthScreen');
+
       if (context.mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+
         if (user == null) {
           ErrorSnackBar(context: context, message: 'Authentication failed')
               .show();
@@ -126,7 +135,17 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                               foregroundColor:
                                   Theme.of(context).colorScheme.onPrimary,
                             ),
-                            child: Text(_isLogin ? 'LOGIN' : 'SIGN UP'),
+                            child: _isLoading
+                                ? SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onPrimary,
+                                    ),
+                                  )
+                                : Text(_isLogin ? 'LOGIN' : 'SIGN UP'),
                           ),
                         ],
                       ),
